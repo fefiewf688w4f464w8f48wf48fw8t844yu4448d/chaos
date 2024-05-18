@@ -1,0 +1,453 @@
+--CHAOS sexy scriptik od duvpeho
+
+spawn(function()
+    setfpscap(500)
+end)
+
+getgenv().KillAura = false
+getgenv().HitboxExpander = false
+getgenv().SpinBot = false
+getgenv().SpinBotSpeed = 0.55
+getgenv().TpSpeed = false
+getgenv().TpSpeedSpeed = 0.5
+getgenv().KillAuraRange = 30
+getgenv().CharacterTrail = false
+getgenv().BoxESP = false
+getgenv().NameESP = false
+
+local Targets = {}
+
+local NEVERLOSE = loadstring(game:HttpGet("https://raw.githubusercontent.com/fefiewf688w4f464w8f48wf48fw8t844yu4448d/NEVERLOSE_ui_lib/main/repost_"))()
+
+NEVERLOSE:Theme("nightly")
+
+local Window = NEVERLOSE:AddWindow("Valyxor","CHAOS | sexy scriptik od duvpeho")
+local Notification = NEVERLOSE:Notification()
+
+Notification.MaxNotifications = 6
+
+Window:AddTabLabel('Home')
+
+local MainTab = Window:AddTab('Misc','earth')
+local CombatTab = Window:AddTab('Combat','earth')
+local FunTab = Window:AddTab('Visuals','earth')
+
+local MovementSec = MainTab:AddSection('Movement',"left")
+local CombatSec = CombatTab:AddSection('Combat',"left")
+local EspSec = FunTab:AddSection('ESP',"left")
+local VisualsSec = FunTab:AddSection('Visuals',"right")
+
+MovementSec:AddToggle("Speed", false, function()
+    if getgenv().TpSpeed == true then
+        getgenv().TpSpeed = false
+    else
+        getgenv().TpSpeed = true
+        Speed()
+    end
+end)
+
+MovementSec:AddSlider('Speed Value',0,15,0.25,function(val)
+    getgenv().TpSpeedSpeed = val
+end)
+
+MovementSec:AddToggle("Spinbot", false, function()
+    if getgenv().SpinBot == true then
+        getgenv().SpinBot = false
+    else
+        getgenv().SpinBot = true
+        SpinBot()
+    end
+end)
+
+MovementSec:AddSlider('Spinbot Speed',0,15,0.25,function(val)
+    getgenv().SpinBotSpeed = val
+end)
+
+CombatSec:AddToggle("Kill Aura", false, function()
+    if getgenv().KillAura == false then
+        getgenv().KillAura = true
+        KillAura()
+    else
+        getgenv().KillAura = false
+    end
+end)
+
+CombatSec:AddToggle("Hitbox Expander", false, function()
+    if getgenv().HitboxExpander == false then
+        getgenv().HitboxExpander = true
+        HitBoxFunction()
+    else
+        getgenv().HitboxExpander = false
+    end
+end)
+
+EspSec:AddToggle("Name", false, function()
+    if getgenv().NameESP == true then
+        getgenv().NameESP = false
+    else
+        getgenv().NameESP = true
+    end
+end)
+
+EspSec:AddToggle("Box", false, function()
+    if getgenv().BoxESP == true then
+        getgenv().BoxESP = false
+    else
+        getgenv().BoxESP = true
+    end
+end)
+
+VisualsSec:AddToggle("Character Trail", false, function()
+    if getgenv().CharacterTrail == true then
+        getgenv().CharacterTrail = false
+    else
+        getgenv().CharacterTrail = true
+        CharacterTrail()
+    end
+end)
+
+function KillAura()
+    spawn(function()
+        while getgenv().KillAura == true do
+            wait()
+            for i, v in pairs(workspace:GetChildren()) do
+                if game.Players.LocalPlayer.Character then
+                    if game.Players.LocalPlayer.Character:FindFirstChild("Torso") then
+                        if v.ClassName == "Model" then
+                            if v:FindFirstChild("Torso") and v.Name ~= game.Players.LocalPlayer.Name then
+                                if v:FindFirstChild("Humanoid") then
+                                    if v:FindFirstChild("Humanoid").Health ~= 0 then
+                                        if (v.Torso.Position - game.Players.LocalPlayer.Character.Torso.Position).magnitude < getgenv().KillAuraRange then
+                                            if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") then
+                                                if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("DamageRemote") then
+                                                    game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("DamageRemote"):FireServer(v:FindFirstChild("Humanoid"))
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+
+function CharacterTrail()
+    LoopCreateVisualClone(0.2)
+end
+
+function SpinBot()
+    while getgenv().SpinBot == true do
+        task.wait()
+        if game.Players.LocalPlayer.Character then
+            if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, getgenv().SpinBotSpeed, 0)
+            end
+        end
+    end
+end
+
+function Speed()
+    while getgenv().TpSpeed == true do
+        task.wait()
+        if game.Players.LocalPlayer.Character then
+            if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                if game.Players.LocalPlayer.Character.Humanoid.MoveDirection ~= Vector3.new(0, 0, 0) then
+                    game.Players.LocalPlayer.Character:TranslateBy(Vector3.new(game.Players.LocalPlayer.Character.Humanoid.MoveDirection.X * getgenv().TpSpeedSpeed, game.Players.LocalPlayer.Character.Humanoid.MoveDirection.Y * getgenv().TpSpeedSpeed, game.Players.LocalPlayer.Character.Humanoid.MoveDirection.Z * getgenv().TpSpeedSpeed))
+                end
+            end
+        end
+    end
+end
+
+function HitBoxFunction()
+    for i, v in pairs(workspace:GetChildren()) do
+        if v:FindFirstChild("HumanoidRootPart") and v.Name ~= game.Players.LocalPlayer.Name then
+            spawn(function()
+                while v:FindFirstChild("HumanoidRootPart") and v.Name ~= game.Players.LocalPlayer.Name and getgenv().HitboxExpander == true do
+                    wait()
+                    v.HumanoidRootPart.CanCollide = false
+                    v.HumanoidRootPart.Size = Vector3.new(12, 12, 12)
+                    v.HumanoidRootPart.Transparency = 0.9
+                    if v:FindFirstChild("HumanoidRootPart") and v.Name ~= game.Players.LocalPlayer.Name and getgenv().HitboxExpander == true then
+                    else
+                        v.HumanoidRootPart.CanCollide = false
+                        v.HumanoidRootPart.Size = Vector3.new(2, 2, 1)
+                        v.HumanoidRootPart.Transparency = 1
+                        break
+                    end
+                end
+            end)
+        end
+    end
+end
+
+function CloneInstance(v)
+    v.Archivable = true
+    local clone = v:Clone()
+    v.Archivable = false
+    return clone
+end
+
+function CreateVisualClone(time)
+    --spawn(function()
+        local charClone = CloneInstance(game.Players.LocalPlayer.Character)
+        charClone.Parent = game.Workspace
+        charClone.Name = "ShittyAssLocalPlayerClone"
+        for i, v in pairs(charClone:GetChildren()) do
+            if not v:IsA("Part") then
+                v:Destroy()
+            end
+        end
+        for i, v in pairs(charClone:GetChildren()) do
+            if v:IsA("Part") then
+                v.Transparency = 0.75
+                v.CanCollide = false
+                v.Anchored = true
+                v.Material = Enum.Material.Glass
+                local highlight = Instance.new("Highlight", v)
+                highlight.FillColor = Color3.fromRGB(170, 0, 255)
+                highlight.FillTransparency = 0.75
+                highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+            end
+        end
+        task.wait(time)
+        charClone:Destroy()
+    --end)
+end
+
+local MAX_CLONES = 3  -- Maximum number of clones to maintain
+local clones = {}
+
+function LoopCreateVisualClone(time)
+    spawn(function()
+        while getgenv().CharacterTrail do
+            -- Create clone
+            local charClone = CloneInstance(game.Players.LocalPlayer.Character)
+            charClone.Parent = game.Workspace
+            charClone.Name = "ShittyAssLocalPlayerClone"
+            for _, v in pairs(charClone:GetChildren()) do
+                if not v:IsA("Part") then
+                    v:Destroy()
+                end
+            end
+            for _, v in pairs(charClone:GetChildren()) do
+                if v:IsA("Part") then
+                    v.Transparency = 0.75
+                    v.CanCollide = false
+                    v.Anchored = true
+                    v.Material = Enum.Material.Glass
+                    local highlight = Instance.new("Highlight", v)
+                    highlight.FillColor = Color3.fromRGB(170, 0, 255)
+                    highlight.FillTransparency = 0.75
+                    highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+                end
+            end
+
+            -- Add to clones table
+            table.insert(clones, charClone)
+            if #clones > MAX_CLONES then
+                -- Destroy oldest clone
+                clones[1]:Destroy()
+                table.remove(clones, 1)
+            end
+
+            task.wait(time)
+        end
+
+        -- Cleanup remaining clones when CharacterTrail is turned off
+        for _, clone in ipairs(clones) do
+            clone:Destroy()
+        end
+        clones = {}
+    end)
+end
+
+
+spawn(function()
+    workspace.ChildAdded:Connect(function(v)
+        if game.Players:FindFirstChild(v.Name) and v.Name ~= game.Players.LocalPlayer.Name then
+            if v:WaitForChild("HumanoidRootPart", math.huge) then
+                spawn(function()
+                    while v:WaitForChild("HumanoidRootPart", math.huge) and getgenv().HitboxExpander == true do
+                        wait()
+                        v.HumanoidRootPart.CanCollide = false
+                        v.HumanoidRootPart.Size = Vector3.new(12, 12, 12)
+                        v.HumanoidRootPart.Transparency = 0.9
+                        if v:WaitForChild("HumanoidRootPart", math.huge) and getgenv().HitboxExpander == true then
+                        else
+                            v.HumanoidRootPart.CanCollide = false
+                            v.HumanoidRootPart.Size = Vector3.new(2, 2, 1)
+                            v.HumanoidRootPart.Transparency = 1
+                            break
+                        end
+                    end
+                end)
+            end
+        end
+    end)    
+end)
+
+spawn(function()
+    game.Lighting.Ambient = Color3.fromRGB(170, 0, 255)
+    game.Lighting.OutdoorAmbient = Color3.fromRGB(170, 0, 255)
+    game.Lighting.ClockTime = 20
+end)
+
+spawn(function()
+    local Framework = Instance.new("ScreenGui", game.CoreGui)
+    
+    function addBox(v)
+        local Frame = Instance.new("Frame", Framework)
+        local TextLabel = Instance.new("TextLabel", Framework)
+        local uiStroke = Instance.new("UIStroke", Frame)
+    
+        Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Frame.BackgroundTransparency = 0.800
+        Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+        Frame.BorderSizePixel = 0
+        Frame.Position = UDim2.new(0.49253732, 0, 0.397022337, 0)
+    
+        TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TextLabel.BackgroundTransparency = 1.000
+        TextLabel.Size = UDim2.new(0.00100000005, 0, 0.00100000005, 0)
+        TextLabel.Font = Enum.Font.SourceSans
+        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        TextLabel.TextSize = 16.000
+        TextLabel.TextStrokeTransparency = 0.000
+        TextLabel.Text = v.Name
+    
+        uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+        uiStroke.Color = Color3.fromRGB(170, 0, 255)
+        uiStroke.Thickness = 1
+    
+        local renderToggle = true
+        local doesExist
+    
+        doesExist = game.Players:FindFirstChild(v.Name).CharacterRemoving:Connect(function(v2)
+            Frame:Destroy()
+            TextLabel:Destroy()
+            if renderToggle == true then
+                renderToggle = false
+            end
+            doesExist:Disconnect()
+        end)
+        spawn(function()
+            while renderToggle == true do
+                task.wait()
+                if v:WaitForChild("HumanoidRootPart") then
+                    local hrp = v.HumanoidRootPart
+                    local hrpSize = hrp.Size * 0.5
+                    local topLeft, isOnScreen = workspace.CurrentCamera:WorldToScreenPoint(hrp.Position - Vector3.new(hrpSize.X, hrpSize.Y - 3.25, hrpSize.Z))
+                    local bottomRight, isOnScreen2 = workspace.CurrentCamera:WorldToScreenPoint(hrp.Position + Vector3.new(hrpSize.X, hrpSize.Y - 3.5, hrpSize.Z))
+        
+                    local centerX = (topLeft.X + bottomRight.X) / 2
+                    local centerY = (topLeft.Y + bottomRight.Y) / 2
+        
+                    local width = bottomRight.X - topLeft.X
+                    local height = bottomRight.Y - topLeft.Y
+        
+                    if isOnScreen and isOnScreen2 then
+                        if getgenv().BoxESP == true then
+                            Frame.Position = UDim2.new(0, centerX - (width / 2), 0, centerY - (height / 2))
+                            Frame.Size = UDim2.new(0, width, 0, height)
+                            Frame.Visible = true
+                        else
+                            Frame.Visible = false
+                        end
+                        if getgenv().NameESP == true then
+                            TextLabel.Position = UDim2.new(0, centerX, 0, centerY - (height / 1.825))
+                            TextLabel.Visible = true
+                        else
+                            TextLabel.Visible = false
+                        end
+                    else
+                        Frame.Visible = false
+                        TextLabel.Visible = false
+                    end
+                else
+                    if renderToggle == true then
+                        renderToggle = false
+                    end
+                    Frame:Destroy()
+                    TextLabel:Destroy()
+                end
+            end
+        end)
+    end
+    
+    game.Players.PlayerAdded:Connect(function(v)
+        if v.Name ~= game.Players.LocalPlayer.Name then
+            v.CharacterAdded:Connect(function(v2)
+                addBox(v2)
+            end)
+        end
+    end)
+    for i, v in pairs(game.Players:GetPlayers()) do
+        if v.Name ~= game.Players.LocalPlayer.Name then
+            if v.Character then
+                addBox(v.Character)
+            end
+            v.CharacterAdded:Connect(function(v2)
+                addBox(v2)
+            end)
+        end
+    end
+end)
+
+spawn(function()
+    local Crosshair = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local Frame_2 = Instance.new("Frame")
+    local Frame_3 = Instance.new("Frame")
+
+    Crosshair.Name = "Crosshair"
+    Crosshair.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    Crosshair.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    Frame.Parent = Crosshair
+    Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Frame.BackgroundTransparency = 1.000
+    Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BorderSizePixel = 0
+    Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Frame.Size = UDim2.new(0, 50, 0, 50)
+
+    Frame_2.Parent = Frame
+    Frame_2.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
+    Frame_2.BackgroundTransparency = 0.750
+    Frame_2.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    Frame_2.Position = UDim2.new(0, 0, 0.5, 0)
+    Frame_2.Size = UDim2.new(0, 50, 0, 0)
+
+    Frame_3.Parent = Frame
+    Frame_3.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
+    Frame_3.BackgroundTransparency = 0.750
+    Frame_3.BorderColor3 = Color3.fromRGB(255, 255, 255)
+    Frame_3.Position = UDim2.new(0.5, 0, 0, 0)
+    Frame_3.Size = UDim2.new(0, 0, 0, 50)
+
+    local uiStroke = Instance.new("UIStroke", Frame_3)
+    uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+    uiStroke.Color = Color3.fromRGB(170, 0, 255)
+    uiStroke.Thickness = 0.8
+
+    local uiStroke2 = Instance.new("UIStroke", Frame_2)
+    uiStroke2.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+    uiStroke2.Color = Color3.fromRGB(170, 0, 255)
+    uiStroke2.Thickness = 0.8
+
+    spawn(function()
+        while true do
+            task.wait()
+            if game.Players.LocalPlayer:GetMouse() then
+                local mouse = game.Players.LocalPlayer:GetMouse()
+                Frame.Position = UDim2.new(0, mouse.X, 0, mouse.Y)
+            end
+        end
+    end)
+end)
